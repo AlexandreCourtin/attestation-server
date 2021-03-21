@@ -34,7 +34,7 @@ async function getCertificate() {
 		document.getElementById('field-city').value = config.city;
 		document.getElementById('field-zipcode').value = config.zipcode;
 		document.getElementById('field-heuresortie').value = `${formatDate(new Date().getUTCHours() + 1)}:${formatDate(new Date().getUTCMinutes())}`;
-		document.getElementById('checkbox-travail').checked = true;
+		document.getElementById('checkbox-8-travail').checked = true;
 		document.getElementById('generate-btn').click();
 	}, config);
 	setTimeout(() => browser.close(), 5000);
@@ -57,11 +57,15 @@ app.get('/getattes', async function (req, res) {
 		files = await readdir('.');
 	}
 
-	const attestationPath = files.find((file) => (/(.pdf)$/gm).test(file));
-	fs.readFile(__dirname + '/' + attestationPath, function (err, data) {
-		res.contentType("application/pdf");
-		res.send(data);
-	});
+	if (files) {
+		const attestationPath = files.find((file) => (/(.pdf)$/gm).test(file));
+		if (attestationPath) {
+			fs.readFile(__dirname + '/' + attestationPath, function (err, data) {
+				res.contentType("application/pdf");
+				res.send(data);
+			});
+		}
+	}
 });
 
 app.listen(port, console.log('server listening on port ' + port));
