@@ -9,7 +9,8 @@ const puppeteer = require('puppeteer');
 const path = require('path');
 
 async function getCertificate() {
-	// const config = JSON.parse(fs.readFileSync('./config.json', { flag: "r" }));
+	console.log('certificate init');
+	const config = JSON.parse(fs.readFileSync('./config.json', { flag: "r" }));
 	const browser = await puppeteer.launch({
 		args: [
 			'--no-sandbox',
@@ -23,20 +24,21 @@ async function getCertificate() {
 		downloadPath: downloadPath,
 	});
 	await page.goto('https://media.interieur.gouv.fr/attestation-deplacement-derogatoire-covid-19/', { waitUntil: 'domcontentloaded' });
-	await page.evaluate((e) => {
+	await page.evaluate((config) => {
 		const formatDate = (date) => date.toString().length === 1 ? '0' + date : date;
-		document.getElementById('field-firstname').value = '';
-		document.getElementById('field-lastname').value = '';
-		document.getElementById('field-birthday').value = '';
-		document.getElementById('field-placeofbirth').value = '';
-		document.getElementById('field-address').value = ''
-		document.getElementById('field-city').value = '';
-		document.getElementById('field-zipcode').value = '';
+		document.getElementById('field-firstname').value = config.firstname;
+		document.getElementById('field-lastname').value = config.lastname;
+		document.getElementById('field-birthday').value = config.birthday;
+		document.getElementById('field-placeofbirth').value = config.placeofbirth;
+		document.getElementById('field-address').value = config.address;
+		document.getElementById('field-city').value = config.city;
+		document.getElementById('field-zipcode').value = config.zipcode;
 		document.getElementById('field-heuresortie').value = `${formatDate(new Date().getUTCHours() + 1)}:${formatDate(new Date().getUTCMinutes())}`;
 		document.getElementById('checkbox-travail').checked = true;
 		document.getElementById('generate-btn').click();
-	});
+	}, config);
 	setTimeout(() => browser.close(), 5000);
+	console.log('certificate done');
 }
 
 app.get('/setattes', async function (req, res) {
@@ -57,9 +59,9 @@ app.get('/getattes', async function (req, res) {
 
 	const attestationPath = files.find((file) => (/(.pdf)$/gm).test(file));
 	fs.readFile(__dirname + '/' + attestationPath, function (err, data) {
-        res.contentType("application/pdf");
-        res.send(data);
-    });
+		res.contentType("application/pdf");
+		res.send(data);
+	});
 });
 
 app.listen(port, console.log('server listening on port ' + port));
