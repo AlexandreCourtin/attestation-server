@@ -1,9 +1,9 @@
 {
-	"firstname": "",
-	"lastname": "",
-	"birthday": "",
-	"placeofbirth": "",
-	"address": "",
-	"city": "",
-	"zipcode": ""
+	"firstname": "Alexandre",
+	"lastname": "Courtin",
+	"birthday": "08/12/2020",
+	"placeofbirth": "Paris",
+	"address": "2 Rue de Machin",
+	"city": "Paris",
+	"zipcode": "75017"
 }
